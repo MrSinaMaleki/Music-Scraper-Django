@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import os
 from dotenv import load_dotenv
+from apps.music.models import Music
 
 load_dotenv()
 
@@ -42,3 +43,12 @@ def scrapper(site_url:str =url) -> list:
 
 
     return results
+
+
+def uni_track(data:list):
+    for track in data:
+        track_obj = Music.objects.filter(code=track.get('code'))
+        if track_obj:
+            pass
+        else:
+            Music(title=track['title'], singer=track['singer'], code=track['code'], img=track['image']).save()
