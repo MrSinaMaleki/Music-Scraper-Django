@@ -9,6 +9,9 @@ class Category(LogicalMixin):
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
 
+    def __str__(self):
+        return self.category_name
+
 
 def get_default_category_name():
     return Category.objects.get_or_create(category_name='Not categorized')[0].id
@@ -25,7 +28,7 @@ class Music(LogicalMixin):
         verbose_name = 'Music'
         verbose_name_plural = 'Musics'
         ordering = ('created_at',)
-        index_together = [models.Index(fields=['code'])]
+        indexes = [models.Index(fields=['code'])]
 
     def __str__(self):
         return f"{self.code}. {self.singer} --> {self.title}"
