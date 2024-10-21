@@ -28,7 +28,7 @@ class Music(LogicalMixin):
         verbose_name = 'Music'
         verbose_name_plural = 'Musics'
         ordering = ('created_at',)
-        index_together = [models.Index(fields=['code'])]
+        indexes = [models.Index(fields=['code'])]
 
     def __str__(self):
         return f"{self.code}. {self.singer} --> {self.title}"
