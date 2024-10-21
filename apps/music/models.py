@@ -1,7 +1,8 @@
 from django.db import models
+from core.managers import LogicalMixin
 
 
-class Music(models.Model):
+class Music(LogicalMixin):
     title = models.CharField(max_length=255)
     singer = models.CharField(max_length=128)
     code = models.CharField(max_length=128, unique=True)
