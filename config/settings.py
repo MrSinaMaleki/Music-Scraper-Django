@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    #Third party apps
+    'rest_framework',
+
 
     # Applications:
     *list(map(lambda app: f"apps.{app}", APPLICATIONS )),
