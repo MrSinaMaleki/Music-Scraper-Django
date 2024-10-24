@@ -1,9 +1,9 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from core.utils import scrapper,uni_track
-from .models import Music
+from .models import Music, Category
 from rest_framework.views import APIView
-from .serializers import MusicSerializer
+from .serializers import MusicSerializer, CategorySerializer
 from rest_framework.response import Response
 
 # Create your views here.
@@ -20,6 +20,20 @@ class ListAllTracks(APIView):
     def get(self, request):
         tracks = Music.objects.all()
         serializer = MusicSerializer(tracks, many=True)
+        return Response(serializer.data)
+
+
+class CategoryListAllTracks(APIView):
+
+    def get_objects(self, pk):
+        try:
+            return Category.objects.get(pk=pk)
+        except Category.DoesNotExist:
+            raise Http404
+
+    def get(self, request,pk):
+        category = Category.objects.get(pk=pk)
+        serializer = CategorySerializer(category)
         return Response(serializer.data)
 
 
