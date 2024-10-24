@@ -22,7 +22,7 @@ class Music(LogicalMixin):
     singer = models.CharField(max_length=128)
     code = models.CharField(max_length=128, unique=True)
     img = models.ImageField(upload_to='music_image')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=get_default_category_name)
+    category = models.ForeignKey(Category,related_query_name="musics",related_name='musics', on_delete=models.CASCADE, default=get_default_category_name)
 
     class Meta:
         verbose_name = 'Music'
