@@ -3,7 +3,7 @@ from .views import index, ListAllTracks, TrackDetail
 
 urlpatterns = [
     path('',index, name='index'),
-    path('new_songs/',ListAllTracks.as_view(), name='new_songs'),
+    path('all_songs/',ListAllTracks.as_view(), name='new_songs'),
 
     path('track_detail/<int:code>', TrackDetail.as_view(), name='track_detail' ),
 ]
