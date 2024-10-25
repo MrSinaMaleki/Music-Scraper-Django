@@ -15,13 +15,14 @@ def index(request):
     return render(request, 'index.html', {'re': "hahah?"})
 
 
-@method_decorator(cache_page(30), name='dispatch')
+@method_decorator(cache_page(10), name='dispatch')
 class ListAllTracks(APIView):
     """
     Getting the list of all the new tracks
     """
     def get(self, request):
-        # print("In here ?!")
+        uni_track(scrapper())
+        print("In here ?!")
         tracks = Music.objects.all()
         serializer = MusicSerializer(tracks, many=True)
         return Response(serializer.data)
@@ -32,6 +33,8 @@ class CategoryListAllTracks(APIView):
 
     def get_objects(self, pk):
         try:
+            uni_track(scrapper())
+            print("In here ?!")
             return Category.objects.get(pk=pk)
         except Category.DoesNotExist:
             raise Http404
@@ -49,6 +52,8 @@ class TrackDetail(APIView):
     """
     def get_object(self, code):
         try:
+            uni_track(scrapper())
+            # print("In here ?!")
             return Music.objects.get(code=code)
         except Music.DoesNotExist:
             raise Http404
