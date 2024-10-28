@@ -32,6 +32,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+AUTH_USER_MODEL = 'account.User'
+
 ALLOWED_HOSTS = []
 CACHE_MIDDLEWARE_SECONDS = 1 * 60
 
