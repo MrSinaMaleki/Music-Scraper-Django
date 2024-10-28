@@ -7,7 +7,7 @@ from .serializers import MusicSerializer, CategorySerializer
 from rest_framework.response import Response
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 # Create your views here.
 
 def index(request):
@@ -20,6 +20,7 @@ class ListAllTracks(APIView):
     """
     Getting the list of all the new tracks
     """
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ]
     def get(self, request):
         uni_track(scrapper())
         print("In here ?!")
@@ -30,6 +31,10 @@ class ListAllTracks(APIView):
 
 @method_decorator(cache_page(30), name='dispatch')
 class CategoryListAllTracks(APIView):
+    """
+    Getting the list of all the tracks in a category.
+    """
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ]
 
     def get_objects(self, pk):
         try:
@@ -50,6 +55,7 @@ class TrackDetail(APIView):
     """
     Getting the details of the track.
     """
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ]
     def get_object(self, code):
         try:
             uni_track(scrapper())
