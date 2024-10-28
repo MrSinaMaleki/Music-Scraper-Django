@@ -33,7 +33,10 @@ class RegisterAPIView(APIView):
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        print(serializer.is_valid())
         if serializer.is_valid():
             return Response({'Message': 'User created'}, status=201)
         return Response({'Message': serializer.errors}, status=401)
+
+
+def logout_view(request):
+    logout(request)
