@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     #Third party apps
     'rest_framework',
+    'rest_framework.authtoken',
 
 
     # Applications:
@@ -113,7 +114,7 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '3/day',
+        'anon': '120/day',
         'user': '1000/day'
     }
 }
