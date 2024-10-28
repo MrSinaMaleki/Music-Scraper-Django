@@ -32,10 +32,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+AUTH_USER_MODEL = 'account.User'
+
 ALLOWED_HOSTS = []
 CACHE_MIDDLEWARE_SECONDS = 1 * 60
 
-APPLICATIONS = ['music']
+APPLICATIONS = ['music', 'account']
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,6 +50,7 @@ INSTALLED_APPS = [
 
     #Third party apps
     'rest_framework',
+    'rest_framework.authtoken',
 
 
     # Applications:
@@ -111,7 +114,7 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '3/day',
+        'anon': '120/day',
         'user': '1000/day'
     }
 }
