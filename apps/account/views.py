@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
-from .serilizers import LoginSerializer
+from .serilizers import LoginSerializer, RegisterSerializer, User
 from django.contrib.auth import authenticate, login, logout
 # Create your views here.
 
@@ -26,3 +26,14 @@ class LoginAPIView(APIView):
                 return Response({"token": token.key, "Success": "Login Successfully"})
 
             return Response({'Message': 'Invalid Username and Password'}, status=401)
+
+
+class RegisterAPIView(APIView):
+    serializer_class = RegisterSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        print(serializer.is_valid())
+        if serializer.is_valid():
+            return Response({'Message': 'User created'}, status=201)
+        return Response({'Message': serializer.errors}, status=401)
