@@ -35,7 +35,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 CACHE_MIDDLEWARE_SECONDS = 1 * 60
 
-APPLICATIONS = ['music']
+APPLICATIONS = ['music', 'account']
 # Application definition
 
 INSTALLED_APPS = [
