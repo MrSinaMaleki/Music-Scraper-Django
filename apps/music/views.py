@@ -11,25 +11,25 @@ from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 # Create your views here.
 
 def index(request):
-    uni_track(scrapper())
+    # uni_track(scrapper())
     return render(request, 'index.html', {'re': "hahah?"})
 
 
-@method_decorator(cache_page(10), name='dispatch')
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ListAllTracks(APIView):
     """
     Getting the list of all the new tracks
     """
     throttle_classes = [AnonRateThrottle, UserRateThrottle, ]
     def get(self, request):
-        uni_track(scrapper())
+        # uni_track(scrapper())
         print("In here ?!")
         tracks = Music.objects.all()
         serializer = MusicSerializer(tracks, many=True)
         return Response(serializer.data)
 
 
-@method_decorator(cache_page(30), name='dispatch')
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class CategoryListAllTracks(APIView):
     """
     Getting the list of all the tracks in a category.
@@ -38,7 +38,7 @@ class CategoryListAllTracks(APIView):
 
     def get_objects(self, pk):
         try:
-            uni_track(scrapper())
+            # uni_track(scrapper())
             print("In here ?!")
             return Category.objects.get(pk=pk)
         except Category.DoesNotExist:
@@ -50,7 +50,7 @@ class CategoryListAllTracks(APIView):
         return Response(serializer.data)
 
 
-@method_decorator(cache_page(30), name='dispatch')
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class TrackDetail(APIView):
     """
     Getting the details of the track.
@@ -58,7 +58,7 @@ class TrackDetail(APIView):
     throttle_classes = [AnonRateThrottle, UserRateThrottle, ]
     def get_object(self, code):
         try:
-            uni_track(scrapper())
+            # uni_track(scrapper())
             # print("In here ?!")
             return Music.objects.get(code=code)
         except Music.DoesNotExist:

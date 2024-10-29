@@ -35,7 +35,7 @@ DEBUG = True
 AUTH_USER_MODEL = 'account.User'
 
 ALLOWED_HOSTS = []
-CACHE_MIDDLEWARE_SECONDS = 1 * 60
+# CACHE_MIDDLEWARE_SECONDS = 1 * 60
 
 APPLICATIONS = ['music', 'account']
 # Application definition
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     #Third party apps
     'rest_framework',
     'rest_framework.authtoken',
+    "debug_toolbar",
 
 
     # Applications:
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -87,7 +89,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
+# DEBUG_TOOLBAR_PANELS = [
+#     'debug_toolbar.panels.versions.VersionsPanel',
+#     'debug_toolbar.panels.timer.TimerPanel',
+#     'debug_toolbar.panels.settings.SettingsPanel',
+#     'debug_toolbar.panels.headers.HeadersPanel',
+#     'debug_toolbar.panels.request.RequestPanel',
+#     'debug_toolbar.panels.sql.SQLPanel',
+#     'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+#     'debug_toolbar.panels.templates.TemplatesPanel',
+#     'debug_toolbar.panels.cache.CachePanel',
+#     'debug_toolbar.panels.signals.SignalsPanel',
+#     'debug_toolbar.panels.logging.LoggingPanel',
+#     'debug_toolbar.panels.redirects.RedirectsPanel',
+# ]
+INTERNAL_IPS = ('127.0.0.1', '0.0.0.0', 'localhost',)
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -100,11 +116,12 @@ DATABASES = {
 }
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': BASE_DIR / 'cached_files',
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": str(os.getenv("REDIS_URL")),
+        # "KEY_PREFIX": "imdb",
+        # "TIMEOUT": 60 * 15,  # in seconds: 60 * 15 (15 minutes)
     }
-
 }
 
 # Number of Requests for anon and logged-in user.
