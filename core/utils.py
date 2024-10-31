@@ -18,40 +18,107 @@ load_dotenv()
 url = os.getenv('url')
 
 
-def scrapper(site_url:str =url) -> list:
-    if not site_url:
-        raise ValueError('site_url cannot be empty')
+import requests
+from bs4 import BeautifulSoup
 
-    titles = list()
-    singers = list()
-    codes = list()
-    images = list()
+url = "https://musicdel.ir"
 
-    res = requests.get(url)
-    res.encoding = 'utf-8'
-    bs = BeautifulSoup(res.text, 'html.parser')
 
-    # Titles + Singers
-    titles_singers =  bs.select('body > div.warpper > div > div.two-box-warpper > div > article:nth-child(3) > div:nth-child(6) > div > a > span')
 
-    for item in [item.get_text().split('-') for item in titles_singers]:
-        titles.append(item[1])
-        singers.append(item[0])
+def get_subjects(url_address:str = url) -> list:
+    if not url_address:
+        raise ValueError("url cannot be empty")
 
-    # Codes
-    for item in bs.select('body > div.warpper > div > div.two-box-warpper > div > article:nth-child(3) > div:nth-child(6) > div > a'):
-        codes.append(item['href'].split('/')[-2])
+    categories =[]
+    category_urls = []
 
-    # Img srcs
-    for image in bs.select('body > div.warpper > div > div.two-box-warpper > div > article:nth-child(3) > div:nth-child(6) > div > a > img'):
-        images.append(image['srcset'].split()[0])
+    res = requests.get(url_address)
+    res.encoding = "utf-8"
+    bs = BeautifulSoup(res.text, "html.parser")
 
-    results = [{'title': title, 'singer':singer, 'code':code, 'image':image}
-               for title, singer, code,image in zip(titles, singers, codes, images)
-               ]
+    a_tags = bs.select('.top > ul > li > a')
+    for a_tag in a_tags:
+        category_urls.append(a_tag.get('href'))
+        categories.append((a_tag.get('title')).replace("دانلود ", "").replace("آهنگ ", "").replace("های", ""))
+
+    results = [{'category_title': category, "category_url": category_url}
+               for category, category_url in zip(categories, category_urls)]
 
 
     return results
+
+
+def main_scrapper(categories_links):
+    del categories_links[0]
+    del categories_links[2]
+    del categories_links[2]
+    titles_list = list()
+    singers_list = list()
+    codes = list()
+    images = list()
+    d320p_tags = list()
+    d128p_tags = list()
+    n_of_tracks = list()
+    raw_category_list = list()
+
+
+    for link in categories_links:
+        raw_category_list.append(link.get('category_title'))
+
+        res = requests.get(link.get('category_url'))
+        res.encoding = 'utf-8'
+        bs = BeautifulSoup(res.text, "html.parser")
+
+        d320p_d128p_tags = bs.select('article > div > div> .downloads2 > .downloads > a')
+        index = 0
+        while index < len(d320p_d128p_tags):
+            d320p_tags.append(d320p_d128p_tags[index].get('href'))
+            index += 1
+            d128p_tags.append(d320p_d128p_tags[index].get('href'))
+            index += 1
+
+
+
+        image_tags = bs.select('body > div.warpper > div > div.two-box-warpper > div > article:nth-child(5) > div > div > a > img')
+        for image_tag in image_tags:
+            images.append(image_tag.get('src'))
+
+
+
+        link_tags = bs.select('body > div.warpper > div > div.two-box-warpper > div > article:nth-child(5) > div > div > a')
+        for link_tag in link_tags:
+            codes.append((link_tag.get('href').split("/"))[4])
+
+
+
+        title_span_tags = bs.select('div > div > a > span')
+        title_span_tags_mod_text = [(title.get_text()).replace("دانلود ", "").replace("آهنگ ", "") for title in title_span_tags]
+
+        for title_singer in title_span_tags_mod_text:
+            t_s = title_singer.split("از")
+            titles_list.append(t_s[0])
+            singers_list.append(t_s[1] if len(t_s) >= 2 else "No Singer")
+
+        n_of_tracks.append(int(len(link_tags)))
+
+    categories = [item for item, number in zip(raw_category_list, n_of_tracks) for _ in range(number)]
+
+    results = [{'title': title, 'singer': singer, 'code': code, 'image': image, "320p_download_link": d320, "128p_download_link": d128}
+               for title, singer, code, image, d320, d128 in zip(titles_list, singers_list, codes, images, d320p_tags, d128p_tags )
+               ]
+
+    # data test debugs:
+    # print("d320p_tags: ", d320p_tags, "len: ", len(d320p_tags), sep="\n", end="\n\n")
+    # print("d120p_tags: ", d128p_tags, "len: ", len(d128p_tags), sep="\n", end="\n\n")
+    # print("codes: ", codes, "len: ", len(codes), sep="\n", end="\n\n")
+    # print("image scr: : ", images, "len: ", len(images), sep="\n", end="\n\n")
+    # print("titles: ", titles_list, "len: ", len(titles_list), sep="\n", end="\n\n")
+    # print("singers: ", singers_list, "len: ", len(singers_list), sep="\n", end="\n\n")
+
+    return results
+
+
+
 
 
 def uni_track(data:list):
@@ -60,7 +127,7 @@ def uni_track(data:list):
         if track_obj:
             pass
         else:
-            ins = Music(title=track['title'], singer=track['singer'], code=track['code'])
+            ins = Music(title=track['title'], singer=track['singer'], code=track['code'], d_320p_link=track['320p_download_link'], d_128p_link=track['128p_download_link'])
             image_file_from_url(instance=ins, url_address=track['image'])
             ins.save()
 

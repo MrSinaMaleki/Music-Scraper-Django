@@ -1,6 +1,6 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
-from core.utils import scrapper,uni_track
+from core.utils import get_subjects,main_scrapper,uni_track
 from .models import Music, Category
 from rest_framework.views import APIView
 from .serializers import MusicSerializer, CategorySerializer
@@ -22,7 +22,7 @@ class ListAllTracks(APIView):
     """
     throttle_classes = [AnonRateThrottle, UserRateThrottle, ]
     def get(self, request):
-        # uni_track(scrapper())
+        uni_track(main_scrapper(get_subjects()))
         print("In here ?!")
         tracks = Music.objects.all()
         serializer = MusicSerializer(tracks, many=True)
