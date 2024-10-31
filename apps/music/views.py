@@ -15,7 +15,7 @@ def index(request):
     return render(request, 'index.html', {'re': "hahah?"})
 
 
-@method_decorator(cache_page(60 * 15), name='dispatch')
+@method_decorator(cache_page(1*60) , name='dispatch')
 class ListAllTracks(APIView):
     """
     Getting the list of all the new tracks

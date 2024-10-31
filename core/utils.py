@@ -1,5 +1,6 @@
 from tkinter import image_names
 from tkinter.font import names
+from unicodedata import category
 
 from bs4 import BeautifulSoup
 import requests
@@ -7,7 +8,7 @@ import os
 
 from django.core.files.base import ContentFile
 from dotenv import load_dotenv
-from apps.music.models import Music
+from apps.music.models import Music, Category
 from PIL import Image
 from io import BytesIO
 
@@ -103,8 +104,8 @@ def main_scrapper(categories_links):
 
     categories = [item for item, number in zip(raw_category_list, n_of_tracks) for _ in range(number)]
 
-    results = [{'title': title, 'singer': singer, 'code': code, 'image': image, "320p_download_link": d320, "128p_download_link": d128}
-               for title, singer, code, image, d320, d128 in zip(titles_list, singers_list, codes, images, d320p_tags, d128p_tags )
+    results = [{'title': title, 'singer': singer, 'code': code, 'image': image, "320p_download_link": d320, "128p_download_link": d128, "category": categories}
+               for title, singer, code, image, d320, d128, categories in zip(titles_list, singers_list, codes, images, d320p_tags, d128p_tags, categories)
                ]
 
     # data test debugs:
@@ -127,7 +128,7 @@ def uni_track(data:list):
         if track_obj:
             pass
         else:
-            ins = Music(title=track['title'], singer=track['singer'], code=track['code'], d_320p_link=track['320p_download_link'], d_128p_link=track['128p_download_link'])
+            ins = Music(title=track['title'], singer=track['singer'], code=track['code'], d_320p_link=track['320p_download_link'], d_128p_link=track['128p_download_link'], category=Category.objects.get_or_create(category_name=track['category'])[0])
             image_file_from_url(instance=ins, url_address=track['image'])
             ins.save()
 
