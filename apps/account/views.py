@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -34,9 +34,11 @@ class RegisterAPIView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            serializer.save()
             return Response({'Message': 'User created'}, status=201)
         return Response({'Message': serializer.errors}, status=401)
 
 
 def logout_view(request):
     logout(request)
+    return redirect("/")
