@@ -23,7 +23,7 @@ class ListAllTracks(APIView):
     throttle_classes = [AnonRateThrottle, UserRateThrottle, ]
     def get(self, request):
         uni_track(main_scrapper(get_subjects()))
-        print("In here ?!")
+        # print("In here ?!")
         tracks = Music.objects.all()
         serializer = MusicSerializer(tracks, many=True)
         return Response(serializer.data)
@@ -38,8 +38,8 @@ class CategoryListAllTracks(APIView):
 
     def get_objects(self, pk):
         try:
-            # uni_track(scrapper())
-            print("In here ?!")
+            uni_track(main_scrapper(get_subjects()))
+            # print("In here ?!")
             return Category.objects.get(pk=pk)
         except Category.DoesNotExist:
             raise Http404
@@ -58,7 +58,7 @@ class TrackDetail(APIView):
     throttle_classes = [AnonRateThrottle, UserRateThrottle, ]
     def get_object(self, code):
         try:
-            # uni_track(scrapper())
+            uni_track(main_scrapper(get_subjects()))
             # print("In here ?!")
             return Music.objects.get(code=code)
         except Music.DoesNotExist:
